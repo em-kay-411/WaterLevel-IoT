@@ -1,0 +1,30 @@
+{
+  "name": "miniproject",
+  "version": "1.0.0",
+  "description": "A project for Water Level Management using IoT",
+  "main": "toDynamoDB.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/em-kay-411/MiniProject-WaterLevel-IoT.git"
+  },
+  "author": "Mohit Kumbhare",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/em-kay-411/MiniProject-WaterLevel-IoT/issues"
+  },
+  "homepage": "https://github.com/em-kay-411/MiniProject-WaterLevel-IoT#readme",
+  "dependencies": {
+    "@serialport/parser-readline": "^10.5.0",
+    "aws-sdk": "^2.1359.0",
+    "dynamodb-doc": "^1.0.0",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "readline": "^1.3.0",
+    "serialport": "^10.5.0",
+    "serialport-js": "^1.1.0",
+    "socket.io": "^4.6.1"
+  }
+}
