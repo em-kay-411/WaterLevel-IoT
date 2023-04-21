@@ -19,9 +19,11 @@
   "dependencies": {
     "@serialport/parser-readline": "^10.5.0",
     "aws-sdk": "^2.1359.0",
+    "axios": "^1.3.6",
     "dynamodb-doc": "^1.0.0",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "path": "^0.12.7",
     "readline": "^1.3.0",
     "serialport": "^10.5.0",
     "serialport-js": "^1.1.0",

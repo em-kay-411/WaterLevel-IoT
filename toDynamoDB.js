@@ -4,12 +4,12 @@ const AWS = require("aws-sdk");
 const fs = require("fs");
 
 AWS.config.update({
-  region: "********", // Replace with your region
-  accessKeyId: "********", // Replace with your access key ID
-  secretAccessKey: "********", // Replace with your secret access key
+  region: "****", // Replace with your region
+  accessKeyId: "******", // Replace with your access key ID
+  secretAccessKey: "******", // Replace with your secret access key
 });
 
-const depth = 100;
+const depth = 20; // Replace this with the depth of the tank
 
 const port = new SerialPort({ path: 'COM7', baudRate: 9600 }); // Replace with your serial port name
 const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
@@ -20,7 +20,12 @@ parser.on("data", (data) => {
   const values = data.split(",");
   if (values[0] === "MotorStatus") {
     const motorStatus = values[1].trim();
-    const waterLevel = (depth - Number(values[3].trim())).toString() 
+    var waterLevel = (((depth - Number(values[3].trim()))/depth)*100).toString() 
+    if(waterLevel <= 0){
+      waterLevel = 0;
+    } else if(waterLevel >= 100){
+      waterLevel = 100;
+    }
     const timestamp = new Date().toISOString();
 
 	const log = `${timestamp} - Motor Status: ${motorStatus}, Water Level: ${waterLevel}\n`;
