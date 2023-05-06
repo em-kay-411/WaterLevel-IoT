@@ -5,11 +5,16 @@ int TRIGGER = D3;
 int ECHO   = D2;
 int RELAY = D5;
 // Replace with your network credentials
-const char* ssid = "Galaxy M3194C2";
-const char* password = "eeyy6643";
+const char* ssid = "*****";
+const char* password = "*******";
 ESP8266WebServer server(80);   //instantiate server at port 80 (http port)
+int depth = 100;
+int lowerLimit = 15;
+int upperLimit = 90;
 
-String page = "";
+int maxDepth = depth - lowerLimit;
+int minDepth = depth - upperLimit;
+String dataString = "";
 int data; 
 void setup(void){
  pinMode(TRIGGER, OUTPUT); 
@@ -29,22 +34,8 @@ void setup(void){
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-  server.on("/", [](){
-    String dataString = String(data);
-    String motorStatus = digitalRead(RELAY) == HIGH ? "ON" : "OFF";
-    String postData = "motor_status=" + motorStatus + "&water_level=" + dataString;
-    WiFiClient client;
-    if (client.connect("localhost", 8080)) {
-      client.println("POST /data HTTP/1.1");
-      client.println("Content-Type: application/x-www-form-urlencoded");
-      client.println("Content-Length: " + String(postData.length()));
-      client.println();
-      client.println(postData);
-      client.flush();
-      client.stop();
-    }
-    page = "<head><meta http-equiv=\"refresh\" content=\"3\"></head><center><h1>Web based Water Level monitor</h1><h3>Current water level is :-</h3> <h4>"+String(data)+"</h4> <br> <h3>Current motor status is :-</h3> <h4>"+motorStatus+"</h4> </center>";
-    server.send(200,"text/html",page);
+  server.on("/data", [](){
+  server.send(200, "text/plain",dataString);
 });
   server.begin();
   Serial.println("Web server started!");
@@ -52,9 +43,11 @@ void setup(void){
 }
  void loop(void){
   if(digitalRead(RELAY) == HIGH){
-    Serial.println("MotorStatus,ON,waterLevel," + String(data));
+    dataString = "MotorStatus,ON,waterLevel," + String(depth - data);
+    Serial.println("MotorStatus,ON,waterLevel," + String(depth - data));
   } else{
-    Serial.println("MotorStatus,OFF,waterLevel," + String(data));
+    dataString = "MotorStatus,OFF,waterLevel," + String(depth - data);
+    Serial.println("MotorStatus,OFF,waterLevel," + String(depth - data));
   }
   digitalWrite(TRIGGER, LOW);  
   delayMicroseconds(2); 
@@ -63,11 +56,11 @@ void setup(void){
   digitalWrite(TRIGGER, LOW);
   long duration = pulseIn(ECHO, HIGH);
   data = (duration/2) / 29.09;
-  if(data <= 5){
+  if(data <= minDepth){
     digitalWrite(RELAY, LOW);
-  } else if(data >= 15){
+  } else if(data >= maxDepth){
     digitalWrite(RELAY, HIGH);
   }
   server.handleClient();
-  delay(10000);
+  delay(500);
 }
