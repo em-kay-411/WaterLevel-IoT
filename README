@@ -1,0 +1,40 @@
+Water Level Management System using IoT
+Aiming towards complete automation...
+
+Variables to be set up before beginning --->
+
+For waterLevelWifi.ino -->
+    1. depth - Depth of the water tank
+    2. lowerLimit - Minimum water level in the tank when the motor has to be switched ON.
+    3. upperLimit - Maximum waater level of the tank when the motor has to be switched OFF.
+
+For sendMail.js -->
+    1. Set the username and password of the sender, i.e 'from' variable.
+        The password may not be the account password. Depends on which mail service is being used.
+        For ex, in gmail, we need to use the App Password to authenticate. Similarly, use the appropriate one.
+
+For usingWifi.js -->
+    1. For AWS configuration - 
+        * region - AWS region
+        * accessKeyId - Access Key Id of the IAM user
+        * secretAccessKey - Secret Access Key of the IAM user    
+    2. senderEmail - Email ID of the sender or the curator of the system.
+    3. receiverEmail - Email ID of the receiver. May add more than one in a JSON file and then the code can be configured accordingly to send notifications to al of them.
+    4. emailSubject - Subject of the mail to be sent.
+    5. emailBody - Body/content in the mail that has to be sent.    
+    6. depth - Depth of the water tank
+    7. url - Enter the correct private IP
+    8. TableName - Amazon DynamoDB table name.
+
+Note - 
+The NodeMCU ESP8266 hardware and the server should be connected to the same network. This is to handle the GET HTTP requests from the private IP.
+
+Server Setup - 
+1. Turn on the VPS with hosted webpage.
+2. Set all the variables as mentioned above.
+3. Make sure that the NodeMCU and Local Server are on the same network.
+4. Remote Server is used to host the webpage.
+5. Power ON the device.
+6. Arisen up the server for the application.
+7. Run the file 'usingWifi.js'
+8. Done
