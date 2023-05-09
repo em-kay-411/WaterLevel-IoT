@@ -5,14 +5,14 @@ const sendMail = require('./sendMail')
 
 //Authenticating AWS
 AWS.config.update({
-  region: "**********", // Replace with your region
-  accessKeyId: "**********", // Replace with your access key ID
-  secretAccessKey: "**********", // Replace with your secret access key
+  region: "*****", // Replace with your region
+  accessKeyId: "*****", // Replace with your access key ID
+  secretAccessKey: "*****", // Replace with your secret access key
 });
 
 //Variables required
-const senderEmail = "******************";
-const receiverEmail = "******************";
+const senderEmail = "*****";
+const receiverEmail = "*******";
 const emailSubject = "Faulty Water Tank Motor";
 const emailBody = "The motor that is being used in the water tank might be faulty. Please switch it OFF manually and report the technician to avoid failure.";
 var testLevel = 0;
@@ -49,7 +49,7 @@ setInterval(() => {
             ttl--;
           }
 
-          console.log(ttl);
+          console.log(`TTL - ${ttl}`);
 
           if(ttl === 0){
             sendMail(senderEmail, receiverEmail, emailSubject, emailBody);

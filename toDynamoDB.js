@@ -4,12 +4,12 @@ const AWS = require("aws-sdk");
 const fs = require("fs");
 
 AWS.config.update({
-  region: "****", // Replace with your region
-  accessKeyId: "******", // Replace with your access key ID
-  secretAccessKey: "******", // Replace with your secret access key
+  region: "*****", // Replace with your region
+  accessKeyId: "*****", // Replace with your access key ID
+  secretAccessKey: "*****", // Replace with your secret access key
 });
 
-const depth = 20; // Replace this with the depth of the tank
+const depth = 20;
 
 const port = new SerialPort({ path: 'COM7', baudRate: 9600 }); // Replace with your serial port name
 const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));

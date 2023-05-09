@@ -6,16 +6,16 @@ const port = 3000;
 
 app.set("view engine", "ejs");
 AWS.config.update({
-    region: "", 
-    accessKeyId: "", 
-    secretAccessKey: "", 
+    region: "*****", 
+    accessKeyId: "*****", 
+    secretAccessKey: "*****", 
   });
 
 
 const dynamodb = new AWS.DynamoDB();
 
 
-const tableName = '';
+const tableName = 'WaterLevelLogs';
 
 
 app.get('/', (req, res) => {
