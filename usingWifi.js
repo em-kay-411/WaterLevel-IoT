@@ -20,8 +20,53 @@ const maxTTL = 20;
 var ttl = maxTTL;
 const depth = 100;
 const docClient = new AWS.DynamoDB.DocumentClient();
+const tableName = "WaterLevelLogs"
 var id = 0;
-const url = "http://192.168.218.98:80/data"; // Replace with the IP address and port number of your ESP8266 server
+const maxItems = 7;
+const url = "http://192.168.127.98:80/data"; // Replace with the IP address and port number of your ESP8266 server
+
+
+function deleteAllItems(tableName, callback) {
+  const params = {
+    TableName: tableName
+  };
+
+  docClient.scan(params, (err, data) => {
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+
+    const deleteRequests = data.Items.map(item => {
+      return {
+        DeleteRequest: {
+          Key: {
+            'id': item.id // Replace with the correct attribute name for the primary key
+          }
+        }
+      };
+    });
+
+    const params = {
+      RequestItems: {
+        [tableName]: deleteRequests
+      }
+    };
+
+    docClient.batchWrite(params, (err, data) => {
+      if (err) {
+        console.log(err);
+        callback(err);
+      } else {
+        console.log("Done Deleting the elements from dynamodb")
+        callback(null, data);
+      }
+    });
+  });
+}
+
+
 
 //The actual loop
 setInterval(() => {
@@ -32,8 +77,8 @@ setInterval(() => {
       console.log(data);
       const values = data.split(",");
       if (values[0] === "MotorStatus") {
-        const motorStatus = values[1].trim();        
-        var waterLevel = ((Number(values[3].trim()) / depth) *100).toString();
+        const motorStatus = values[1].trim();
+        var waterLevel = ((Number(values[3].trim()) / depth) * 100).toString();
         if (waterLevel <= 0) {
           waterLevel = 0;
         } else if (waterLevel >= 100) {
@@ -41,17 +86,17 @@ setInterval(() => {
         }
 
         // To check if the motor is faulty
-        if(motorStatus === "ON"){
-          if(testLevel !== waterLevel){
+        if (motorStatus === "ON") {
+          if (testLevel < waterLevel) {
             testLevel = waterLevel;
             ttl = maxTTL;
-          } else if(testLevel === waterLevel){
+          } else if (testLevel >= waterLevel) {
             ttl--;
           }
 
           console.log(`TTL - ${ttl}`);
 
-          if(ttl === 0){
+          if (ttl === 0) {
             sendMail(senderEmail, receiverEmail, emailSubject, emailBody);
             ttl = maxTTL;
           }
@@ -86,7 +131,21 @@ setInterval(() => {
             console.log("Item added to table");
           }
         });
+
         id++;
+
+        // Delete if the total items are 30
+        if (id === maxItems) {
+          deleteAllItems(tableName, (err, data) => {
+            if (err) {
+              console.error('Error deleting items:', err);
+            } else {
+              console.log('All items deleted from table:', tableName);
+            }
+          });
+
+          id = 0;
+        }
       }
     })
     .catch((error) => {

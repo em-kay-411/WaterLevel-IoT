@@ -16,31 +16,38 @@ const dynamodb = new AWS.DynamoDB();
 
 
 const tableName = 'WaterLevelLogs';
+var latestItem = {
+  motorStatus: { S: 'OFF' },
+  id: { N: '0' },
+  waterLevel: { S: '87' },
+  timestamp: { S: '2023-05-11T12:55:30.004Z' }
+};
 
 
 app.get('/', (req, res) => {
-  
+
   const params = {
     TableName: tableName
   };
 
-  
+
   dynamodb.scan(params, (err, data) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error getting latest entry from DynamoDB');
     } else {
-      
+
       const sortedItems = data.Items.sort((a, b) => {
         return b.id.N - a.id.N;
       });
 
-      
-      const latestItem = sortedItems[0];
+      if(sortedItems[0] !== undefined){
+        latestItem = sortedItems[0];
+      }
       console.log(latestItem);
 
-      
-      res.render("index", { item: latestItem});
+
+      res.render("index", { item: latestItem });
     }
   });
 });
